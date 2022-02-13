@@ -41,14 +41,14 @@ PS > docker rm --force BlazingMaps
 Assuming your are signed in to Heroku, publish away!
 
 ```powershell
-PS > heroku container:push -a blazing-maps web
-PS > heroku container:release -a blazing-maps web
+PS > heroku container:push -a blazingmaps web
+PS > heroku container:release -a blazingmaps web
 ```
 
 Doing it in one go!
 
 ```powershell
-PS > docker build -t BlazingMaps .;heroku container:push -a blazing-maps web;heroku container:release -a blazing-maps web
+PS > docker build -t BlazingMaps .;heroku container:push -a blazingmaps web;heroku container:release -a blazingmaps web
 ```
 
 ## Resources
