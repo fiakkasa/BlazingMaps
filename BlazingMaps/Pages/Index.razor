@@ -1,41 +1,15 @@
 ﻿@page "/"
-@using Microsoft.Extensions.Options
 @inject IAddressLookupService als
 @inject IMarkerFactory mf
 @inject IOptionsSnapshot<MapOptionsEx> mapOptions
 @implements IDisposable
 
-<div class="address-search-container position-fixed overflow-hidden d-flex flex-column">
-    <div class="address-search-input-container input-group flex-shrink-0 p-1">
-        <input type="search" 
-               class="address-search-input form-control" 
-               placeholder="Search.." 
-               disabled="@_searching" 
-               @bind="_searchToken" 
-               @bind:event="oninput" 
-               @onkeypress="SearchOnEnter" />
-        <button class="btn btn-sm btn-light" type="button" disabled="@_searching" @onclick="Search">
-            <span class="fa-solid fa-magnifying-glass"></span>
-        </button>
-        @if (_searchToken.Length > 0)
-        {
-            <button class="btn btn-sm btn-light" type="button" disabled="@_searching" @onclick="Clear">
-                <span class="fa-solid fa-x"></span>
-            </button>
-        }
-    </div>
+<Search Home="_home"
+        SearchResults="_searchResults"
+        Disabled="_searching"
+        OnSelectionChanged="SetSelection"
+        OnSearchTokenChanged="Search" />
 
-    @if (_searchResults.Count > 0)
-    {
-        <div class="address-search-results-container flex-fill overflow-auto p-1 pt-0 d-grid gap-2">
-            <Virtualize Items="_searchResults">
-                <button type="button" class="btn btn-sm @(_selected == context.Id ? "btn-primary" : "btn-secondary")" @onclick="_ => SetSelection(context)">
-                    @context.DisplayText
-                </button>
-            </Virtualize>
-        </div>
-    }
-</div>
 <div class="map-container">
     <Map @ref="mapRef" MapOptions="@mapOptions.Value"></Map>
 </div>
@@ -43,69 +17,39 @@
 @code {
     private Map? mapRef;
     private List<AddressLookup> _searchResults = new();
-    private AddressLookup Default => new()
-    {
-        Text = "<span class=\"fa-solid fa-house\"></span> Home",
-        Lat = mapOptions.Value.Center.Lat,
-        Lon = mapOptions.Value.Center.Lng,
-    };
-    private string _selected = string.Empty;
+    private AddressLookup? _home;
     private Marker? _selectedMarker;
-    private string _searchToken = string.Empty;
     private bool _searching = false;
     private CancellationTokenSource _cts = new();
-
-    private async Task Clear()
-    {
-        _searchToken = string.Empty;
-        _selected = string.Empty;
-        await ClearMarker();
-        _searchResults.Clear();
-        _searchResults.Insert(0, Default);
-    }
 
     private async Task ClearMarker()
     {
         if (_selectedMarker is not { }) return;
 
         await _selectedMarker.Remove();
-        _selectedMarker = null;        
+        _selectedMarker = null;
     }
 
-    private async Task SearchOnEnter(KeyboardEventArgs ev)
-    {
-        if (ev.Code != "Enter") return;
-
-        await Search();
-    }
-
-    private async Task Search()
+    private async Task Search(string searchToken)
     {
         _searching = true;
 
-        _selected = string.Empty;
         await ClearMarker();
 
-        _searchResults = (await als.Fetch(_searchToken, _cts.Token)).ToList();
-        _searchResults.Insert(0, Default);
+        _searchResults = (await als.Fetch(searchToken, _cts.Token)).ToList();
 
         _searching = false;
     }
 
-    private async Task SetSelection(AddressLookup item)
+    private async Task SetSelection(string selectedId)
     {
         if (mapRef is not { }) return;
 
         await ClearMarker();
 
-        if(_selected == item.Id)
-        {
-            _selected = string.Empty;
+        if (selectedId == string.Empty || _searchResults.Prepend(_home).FirstOrDefault(x => x?.Id == selectedId) is not { } item)
             return;
-        }
 
-        _selected = item.Id;
-        
         var ll = new LatLng() { Lat = item.Lat, Lng = item.Lon };
         await mapRef.SetView(new() { Lat = item.Lat, Lng = item.Lon });
         _selectedMarker = await mf.CreateAndAddToMap(ll, mapRef);
@@ -119,7 +63,12 @@
 
     protected override void OnInitialized()
     {
-        _searchResults.Add(Default);
+        _home = new()
+        {
+            Text = "<span class=\"fa-solid fa-house\"></span> Home",
+            Lat = mapOptions.Value.Center.Lat,
+            Lon = mapOptions.Value.Center.Lng,
+        };
     }
 
     public void Dispose()

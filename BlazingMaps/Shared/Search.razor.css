@@ -1,0 +1,12 @@
+﻿.address-search-container {
+    top: 1rem;
+    left: 1rem;
+    z-index: 2;
+    width: 15rem;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem)
+}
+
+.address-search-results-container {
+    opacity: .95;
+}
