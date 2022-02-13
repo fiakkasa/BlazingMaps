@@ -1,0 +1,25 @@
+﻿.address-search-container {
+    top: 1rem;
+    left: 1rem;
+    z-index: 2;
+    width: 15rem;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem)
+}
+
+.address-search-results-container {
+    opacity: .95;
+}
+
+.map-container > ::deep .leaflet-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 1 !important;
+    height: 100vh !important;
+    width: 100vw !important;
+}
+
+    .map-container > ::deep .leaflet-container > .leaflet-control-container .leaflet-control-zoom {
+        display: none !important;
+    }

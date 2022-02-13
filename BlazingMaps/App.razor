@@ -1,0 +1,22 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class="container vh-100 d-flex justify-content-center align-items-center">
+                <div class="card mb-3">
+                    <img src="images/not-found.png" class="card-img-top" />
+                    <div class="card-body">
+                        <h5 class="card-title">404</h5>
+                        <p class="card-text">Sorry, there's nothing at this address.</p>
+                        <div class="d-flex justify-content-end">
+                            <NavLink href="/" class="btn btn-outline-primary" Match="NavLinkMatch.All">Home</NavLink>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>
