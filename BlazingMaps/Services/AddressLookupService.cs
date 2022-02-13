@@ -22,14 +22,13 @@ public class AddressLookupService : IAddressLookupService
         _logger = logger;
     }
 
-    public async ValueTask<IEnumerable<AddressLookup>> Fetch(string address, CancellationToken cancellationToken = default)
+    public async ValueTask<IEnumerable<AddressLookup>> Fetch(string? address, CancellationToken cancellationToken = default)
     {
         if (address?.Trim() is not { Length: > 0 } value) return Enumerable.Empty<AddressLookup>();
 
-        using var client = _clientFactory.CreateClient(Consts.AddressLookupClientName);
-
         try
         {
+            using var client = _clientFactory.CreateClient(Consts.AddressLookupClientName);
             return (
                 await client
                     .GetFromJsonAsync<IEnumerable<AddressLookup>>(client.BaseAddress + value, cancellationToken)

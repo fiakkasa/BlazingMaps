@@ -1,4 +1,8 @@
-﻿namespace BlazingMaps;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace BlazingMaps;
+
+[ExcludeFromCodeCoverage]
 public static class Consts
 {
     public const string AddressLookupClientName = "AddressLookupClient";

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace BlazingMaps.Models;
 
+[ExcludeFromCodeCoverage]
 public record AddressLookup
 {
     private string? _id;
