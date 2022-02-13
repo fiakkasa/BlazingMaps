@@ -18,7 +18,7 @@
         }
     </div>
 
-    <div class="address-search-results-container flex-fill overflow-auto p-1 pt-0 d-grid gap-2">
+    <div class="address-search-results-container flex-fill overflow-auto p-1 d-flex flex-column">
         @if (Home is { })
         {
             <button type="button" class="btn btn-sm @SelectedClass(Home.Id)" @onclick="_ => SetSelection(Home)">
@@ -28,7 +28,7 @@
         @if (SearchResults is { Count: > 0 })
         {
             <Virtualize Items="SearchResults">
-                <button type="button" class="btn btn-sm @SelectedClass(context.Id)" @onclick="_ => SetSelection(context)">
+                <button type="button" class="btn btn-sm mt-2 @SelectedClass(context.Id)" @onclick="_ => SetSelection(context)">
                     @context.DisplayText
                 </button>
             </Virtualize>
