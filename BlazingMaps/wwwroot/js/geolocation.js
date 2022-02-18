@@ -1,4 +1,5 @@
-﻿export let Geolocation = {
+﻿// @see https://github.com/darnton/BlazorDeviceInterop
+export let Geolocation = {
 
     getCurrentPosition: async function (options) {
         var result = { position: null, error: null };

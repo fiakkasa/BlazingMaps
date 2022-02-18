@@ -88,13 +88,13 @@
         {
             var currentPosition = await gs.GetCurrentPosition();
 
-            if (currentPosition.IsSuccess)
+            if (currentPosition is { IsSuccess: true, Position: { } position } )
             {
                 _home = new()
                 {
                     Text = "<span class=\"fa-solid fa-house\"></span> Home",
-                    Lat = currentPosition.Position.Coords.Latitude,
-                    Lon = currentPosition.Position.Coords.Longitude
+                    Lat = position.Coords.Latitude,
+                    Lon = position.Coords.Longitude
                 };
 
                 return;
