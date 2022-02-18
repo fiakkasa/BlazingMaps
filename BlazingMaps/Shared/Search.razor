@@ -41,20 +41,20 @@
     [Parameter] public List<AddressLookup>? SearchResults { get; set; }
     [Parameter] public AddressLookup? Home { get; set; }
     [Parameter] public bool Disabled { get; set; }
+    [Parameter] public string SelectedId { get; set; } = string.Empty;
     [Parameter] public EventCallback<string> OnSearchTokenChanged { get; set; }
-    [Parameter] public EventCallback<string> OnSelectionChanged { get; set; }
+    [Parameter] public EventCallback<string> SelectedIdChanged { get; set; }
 
-    private string _selected = string.Empty;
     private string _searchToken = string.Empty;
 
-    private string SelectedClass(string id) => _selected == id ? "btn-primary" : "btn-secondary";
+    private string SelectedClass(string id) => SelectedId == id ? "btn-primary" : "btn-secondary";
 
     private async Task Clear()
     {
         _searchToken = string.Empty;
-        _selected = string.Empty;
+        SelectedId = string.Empty;
         await OnSearchTokenChanged.InvokeAsync(_searchToken);
-        await OnSelectionChanged.InvokeAsync(_selected);
+        await SelectedIdChanged.InvokeAsync(SelectedId);
     }
 
     private async Task OnInputHandler(ChangeEventArgs ev)
@@ -74,14 +74,14 @@
 
     private async Task SearchAddress()
     {
-        _selected = string.Empty;
+        SelectedId = string.Empty;
         await OnSearchTokenChanged.InvokeAsync(_searchToken);
-        await OnSelectionChanged.InvokeAsync(_selected);
+        await SelectedIdChanged.InvokeAsync(SelectedId);
     }
 
     private async Task SetSelection(AddressLookup item)
     {
-        _selected = _selected == item.Id ? string.Empty : item.Id;
-        await OnSelectionChanged.InvokeAsync(_selected);
+        SelectedId = SelectedId == item.Id ? string.Empty : item.Id;
+        await SelectedIdChanged.InvokeAsync(SelectedId);
     }
 }

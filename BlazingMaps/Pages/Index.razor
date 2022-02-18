@@ -9,7 +9,8 @@
 <Search Home="_home"
         SearchResults="_searchResults"
         Disabled="_searching"
-        OnSelectionChanged="SetSelection"
+        SelectedId="@_selectedId"
+        SelectedIdChanged="SetSelection"
         OnSearchTokenChanged="Search" />
 
 <div class="map-container">
@@ -23,6 +24,8 @@
     private Marker? _selectedMarker;
     private bool _searching = false;
     private CancellationTokenSource _cts = new();
+    private bool initialCentering = false;
+    private string _selectedId = string.Empty;
 
     private async Task ClearMarker()
     {
@@ -50,8 +53,12 @@
         await ClearMarker();
 
         if (selectedId == string.Empty || _searchResults.Prepend(_home).FirstOrDefault(x => x?.Id == selectedId) is not { } item)
+        {
+            _selectedId = string.Empty;
             return;
+        }
 
+        _selectedId = selectedId;
         var ll = new LatLng() { Lat = item.Lat, Lng = item.Lon };
         await mapRef.SetView(new() { Lat = item.Lat, Lng = item.Lon });
         _selectedMarker = await mf.CreateAndAddToMap(ll, mapRef);
@@ -60,6 +67,16 @@
         {
             await Task.Delay(250);
             await mapRef.SetZoom(mapOptions.Value.ZoomOnSelection);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender && !initialCentering && _home is { })
+        {
+            await SetSelection(_home.Id);
+            initialCentering = true;
+            StateHasChanged();
         }
     }
 
@@ -85,8 +102,6 @@
                 Lon = mapOptions.Value.Center.Lng,
             };
         }
-
-        await SetSelection(_home.Id);
     }
 
     public void Dispose()
