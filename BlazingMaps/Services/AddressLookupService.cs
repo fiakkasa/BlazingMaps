@@ -32,7 +32,7 @@ public class AddressLookupService : IAddressLookupService
             return (
                 await client
                     .GetFromJsonAsync<IEnumerable<AddressLookup>>(client.BaseAddress + value, cancellationToken)
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(true)
             )?
             .DistinctBy(x => x.Id)
             ?? Enumerable.Empty<AddressLookup>();
