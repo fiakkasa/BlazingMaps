@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Darnton.Blazor.DeviceInterop" Version="0.1.2" />
 		<PackageReference Include="FisSst.BlazorMaps" Version="1.0.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
 	</ItemGroup>

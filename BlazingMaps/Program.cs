@@ -2,6 +2,7 @@ using BlazingMaps;
 using BlazingMaps.Interfaces;
 using BlazingMaps.Models;
 using BlazingMaps.Services;
+using Darnton.Blazor.DeviceInterop.Geolocation;
 using FisSst.BlazorMaps.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,7 @@ services
     .AddOptions<MapOptionsEx>()
     .Bind(builder.Configuration.GetRequiredSection(Consts.MapOptionsKey));
 services.AddBlazorLeafletMaps();
+services.AddScoped<IGeolocationService, GeolocationService>();
 
 var app = builder.Build();
 

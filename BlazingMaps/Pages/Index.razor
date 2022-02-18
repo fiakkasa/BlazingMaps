@@ -1,7 +1,9 @@
 ﻿@page "/"
+@using Darnton.Blazor.DeviceInterop.Geolocation
 @inject IAddressLookupService als
 @inject IMarkerFactory mf
 @inject IOptionsSnapshot<MapOptionsEx> mapOptions
+@inject IGeolocationService gs
 @implements IDisposable
 
 <Search Home="_home"
@@ -61,14 +63,30 @@
         }
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _home = new()
+        try
         {
-            Text = "<span class=\"fa-solid fa-house\"></span> Home",
-            Lat = mapOptions.Value.Center.Lat,
-            Lon = mapOptions.Value.Center.Lng,
-        };
+            var currentPosition = await gs.GetCurrentPosition();
+
+            _home = new()
+            {
+                Text = "<span class=\"fa-solid fa-house\"></span> Home",
+                Lat = currentPosition.Position.Coords.Latitude,
+                Lon = currentPosition.Position.Coords.Longitude
+            };
+        }
+        catch
+        {
+            _home = new()
+            {
+                Text = "<span class=\"fa-solid fa-house\"></span> Home",
+                Lat = mapOptions.Value.Center.Lat,
+                Lon = mapOptions.Value.Center.Lng,
+            };
+        }
+
+        await SetSelection(_home.Id);
     }
 
     public void Dispose()
