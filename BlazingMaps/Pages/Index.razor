@@ -1,9 +1,11 @@
 ﻿@page "/"
 @using Darnton.Blazor.DeviceInterop.Geolocation
+@using Microsoft.Extensions.Logging
 @inject IAddressLookupService als
 @inject IMarkerFactory mf
 @inject IOptionsSnapshot<MapOptionsEx> mapOptions
 @inject IGeolocationService gs
+@inject ILogger<Index> logger
 @implements IDisposable
 
 <Search Home="_home"
@@ -86,22 +88,29 @@
         {
             var currentPosition = await gs.GetCurrentPosition();
 
-            _home = new()
+            if (currentPosition.IsSuccess)
             {
-                Text = "<span class=\"fa-solid fa-house\"></span> Home",
-                Lat = currentPosition.Position.Coords.Latitude,
-                Lon = currentPosition.Position.Coords.Longitude
-            };
+                _home = new()
+                {
+                    Text = "<span class=\"fa-solid fa-house\"></span> Home",
+                    Lat = currentPosition.Position.Coords.Latitude,
+                    Lon = currentPosition.Position.Coords.Longitude
+                };
+
+                return;
+            }
         }
-        catch
+        catch(Exception ex)
         {
-            _home = new()
-            {
-                Text = "<span class=\"fa-solid fa-house\"></span> Home",
-                Lat = mapOptions.Value.Center.Lat,
-                Lon = mapOptions.Value.Center.Lng,
-            };
+            logger.LogError(ex, ex.Message);
         }
+
+        _home = new()
+        {
+            Text = "<span class=\"fa-solid fa-house\"></span> Home",
+            Lat = mapOptions.Value.Center.Lat,
+            Lon = mapOptions.Value.Center.Lng,
+        };
     }
 
     public void Dispose()
