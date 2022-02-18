@@ -1,6 +1,5 @@
 ﻿// @see https://github.com/darnton/BlazorDeviceInterop
 export let Geolocation = {
-
     getCurrentPosition: async function (options) {
         var result = { position: null, error: null };
         var getCurrentPositionPromise = new Promise((resolve, reject) => {
@@ -10,37 +9,11 @@ export let Geolocation = {
                 navigator.geolocation.getCurrentPosition(resolve, reject, options);
             }
         });
-        await getCurrentPositionPromise.then(
-            (position) => { this.mapPositionToResult(position, result) }
-        ).catch(
-            (error) => { this.mapErrorToResult(error, result) }
-        );
+        await getCurrentPositionPromise
+            .then((position) => { this.mapPositionToResult(position, result) })
+            .catch((error) => { this.mapErrorToResult(error, result) });
         return result;
     },
-
-    watchPosition: async function (dotNetCallbackRef, callbackMethod, options) {
-        if (!navigator.geolocation) return null;
-
-        return navigator.geolocation.watchPosition(
-            (position) => {
-                let result = { position: null, error: null };
-                this.mapPositionToResult(position, result);
-                dotNetCallbackRef.invokeMethodAsync(callbackMethod, result);
-            },
-            (error) => {
-                let result = { position: null, error: null };
-                this.mapErrorToResult(error, result);
-                dotNetCallbackRef.invokeMethodAsync(callbackMethod, result);
-            },
-            options);
-    },
-
-    clearWatch: function (id) {
-        if (navigator.geolocation) {
-            navigator.geolocation.clearWatch(id);
-        }
-    },
-
     mapPositionToResult: function (position, result) {
         result.position = {
             coords: {

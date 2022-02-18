@@ -21,5 +21,6 @@ public enum GeolocationPositionErrorCode
     /// <summary>
     /// Geolocation failed because no position was returned in time.
     /// </summary>
-    TIMEOUT = 3
+    TIMEOUT = 3,
+    ERROR = 4,
 }
